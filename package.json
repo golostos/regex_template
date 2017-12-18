@@ -1,0 +1,18 @@
+{
+  "name": "test-regex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "github:gulpjs/gulp#4.0"
+  },
+  "scripts": {
+    "start": "./node_modules/.bin/gulp",
+    "gulp": "./node_modules/.bin/gulp"
+  },
+  "keywords": [],
+  "author": "Alexander Dmitriev",
+  "license": "MIT"
+}

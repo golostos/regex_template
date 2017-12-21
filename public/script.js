@@ -17,11 +17,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Если блок отображается, то запускаем функцию его обработки
   if (!comparison.hidden) handleComparison(comparison);
-  if (!comparison.hidden) handleReplacement(replacement);
+  if (!replacement.hidden) handleReplacement(replacement);
 });
 
 /**
- * Функция для задач сравнения строк с регуляркой
+ * Функция для задач поиска и сравнения строк с регуляркой
  */
 function handleComparison(comparison) {
 
@@ -42,7 +42,8 @@ function handleComparison(comparison) {
     // вернуть из функции в отформатированном виде со всеми 
     // значениями и индексами, получаемыми от match или exec
     // При возвращении строки эта строка будет показана в браузере
-    // Если совпадений не найдено, необходимо вернуть false
+    // Если совпадений не найдено, необходимо вернуть false или пустую строку,
+    // но только если для других случаев тоже возвращается строка
     return false;
   }
 
@@ -58,6 +59,7 @@ function handleComparison(comparison) {
     handler(inputElem);
   }
 
+  // При загрузке страницы запускается проверка регулярок
   for (var index = 0; index < inputs.length; index++) {
     handler(inputs[index]);
   }
@@ -65,21 +67,30 @@ function handleComparison(comparison) {
   function handler(inputElem) {
     // Вызываем вашу функцию проверки регулярки
     var checkResult = checkCompare(inputElem.value);
+    var answer = inputElem.nextElementSibling;
+    var compareResult = inputElem.nextElementSibling.nextElementSibling;
+
     // Выясняем есть ли родительского элемента класс .wrong-sample
     var wrongSampleFlag = inputElem.closest(".wrong-sample") ? true : false;
+    // Если функция с регуляркой вернула boolean, то просто меняем цвет элемента
     if (wrongSampleFlag && typeof checkResult === "boolean") checkResult = !checkResult;
+    // Если проверка успешна меняем цвет на положительный
+    match(answer, checkResult);
     if (checkResult === true) {
-      // Если проверка успешна меняем цвет на положительный
-      match(inputElem.nextElementSibling);
+      answer.textContent = wrongSampleFlag ? "Не совпало" : "Совпало";
     } else if (checkResult === false) {
-      nomatch(inputElem.nextElementSibling);
+      answer.textContent = wrongSampleFlag ? "Совпало" : "Не совпало";
     }
 
-    var compareResult = inputElem.nextElementSibling.nextElementSibling;
+    // Если функция с регуляркой возвращает строку, то отображаем эту строку в браузере
     if (typeof checkResult === "string") {
-      compareResult.classList.add("visible");
-      if (!wrongSampleFlag) match(inputElem.nextElementSibling);
-      else nomatch(inputElem.nextElementSibling);
+      if (checkResult !== "") {
+        compareResult.classList.add("visible");
+        wrongSampleFlag = !wrongSampleFlag;
+      }
+      else compareResult.classList.remove("visible");
+      match(answer, wrongSampleFlag);
+      answer.textContent = checkResult === "" ? "Не найдено" : "Найдено";
     } else {
       compareResult.classList.remove("visible");
     }
@@ -88,15 +99,16 @@ function handleComparison(comparison) {
 
 }
 
-function match(elem) {
-  // Переключаем классы CSS у соседнего элемента, чтобы поменять его цвет
-  elem.classList.remove("no-match");
-  elem.classList.add("match");
-}
-
-function nomatch(elem) {
-  elem.classList.remove("match");
-  elem.classList.add("no-match");
+function match(elem, matchFlag) {
+  // Переключаем классы CSS у элемента, чтобы поменять его цвет
+  matchFlag = typeof matchFlag === "undefined" ? true : matchFlag;
+  if (matchFlag === true) {
+    elem.classList.remove("no-match");
+    elem.classList.add("match");
+  } else {
+    elem.classList.remove("match");
+    elem.classList.add("no-match");
+  }
 }
 
 /**
@@ -144,11 +156,7 @@ function handleReplacement(replacement) {
     if (!replaceResult) children[1].innerHTML = "<span>Результат замены</span>";
     else children[1].textContent = replaceResult;
     var expectationValue = children[2].value;
-    if (replaceResult && replaceResult === expectationValue) {
-      // Если проверка успешна меняем цвет на положительный
-      match(children[1]);
-    } else {
-      nomatch(children[1]);
-    }
+    // Если проверка успешна меняем цвет на положительный
+    match(children[1], replaceResult && replaceResult === expectationValue);
   }
 }

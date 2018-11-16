@@ -2,7 +2,7 @@ const gulp = require("gulp");
 const path = require("path");
 const browserSync = require("browser-sync").create();
 
-let dirName = path.join(__dirname, "public");
+let dirName = "public";
 
 gulp.task("browser-sync-init", function(done) {
   browserSync.init({

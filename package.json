@@ -1,12 +1,12 @@
 {
   "name": "test-regex",
   "version": "1.0.0",
-  "description": "",
+  "description": "Template for regexp tasks",
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
-    "browser-sync": "^2.18.13",
-    "gulp": "github:gulpjs/gulp#4.0"
+    "browser-sync": "latest",
+    "gulp": "^4.0.0"
   },
   "scripts": {
     "start": "./node_modules/.bin/gulp",
